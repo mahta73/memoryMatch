@@ -36,69 +36,80 @@ let startTimer = function() {
 }
 
 // sort the values in random order
-let randomCards = function() {
+cardValues = (function() {
   let values = [1, 3, 2, 4, 3,"O_O", 1, 2, 4];
   values.sort( (one, two) => 0.5 - Math.random() );
   return values;
-};
+})();
 
 // reveal the value behind the card
-let reveal = function(cell) {
-  cell.style.backgroundColor = "#ff00bf";
-  cell.innerHTML = cell.value;
-  cell.click = true;
+let reveal = function() {
+  this.style.backgroundColor = "#ff00bf";
+  this.innerHTML = this.value;
+  this.isClicked = true;
 };
 
 // hide the valud behind the card
-let hide = function(cell) {
-  cell.style.backgroundColor = "pink";
-  cell.innerHTML = "";
-  cell.clicked = false;
+let hide = function() {
+  this.style.backgroundColor = "pink";
+  this.innerHTML = "";
+  this.isClicked = false;
 };
 
 // cell is matched
-let matched = function(cell) {
+let matched = function() {
   numOfCompletedCells++;
-  cell.completed = true;
-  cell.style.backgroundColor = "#40ff00	";
-  console.log(cells);
-  cells = cells.filter( (currentElement) => currentElement.value != cell.value);
-  console.log(cells);
+  this.isComplete = true;
+  this.style.backgroundColor = "#40ff00	";
+
+  this.addEventListener = null;
+  // cells = cells.filter( (currentElement) => currentElement.value != this.value);
 };
 
 
+let Cell = function(i) {
 
-let Cell = function(cell, i) {
+  this.value = cardValues[i];
+  this.isComplete = false;
+  this.isClicked = false;
 
-  cell.value = cardValues[i];
-  cell.isComplete = false;
-  cell.isClicked = false;
 
-  cell.addEventListener("mouseenter", () => {
-    if (cell.isComplete === false && cell.isClicked === false) {
-      cell.style.opacity = "0.8";
+  this.addEventListener("mouseenter", () => {
+    if (this.isComplete === false && this.isClicked === false) {
+      this.style.opacity = "0.8";
     }
   });
 
-  cell.addEventListener("mouseleave", () => {
-    if (cell.isComplete === false && cell.isClicked === false) {
-      cell.style.opacity = "1";
+  this.addEventListener("mouseleave", () => {
+    if (this.isComplete === false && this.isClicked === false) {
+      this.style.opacity = "1";
     }
   });
 
-  cell.addEventListener("click", () => {
-    if (isReady === false) {
+
+  this.addEventListener("click", () => {
+
+    if (isReady === false || this.isComplete === true) {
       return;
     }
-
     startTimer();
-    clickedArray.push(cell);
-    reveal(cell);
+
+    clickedArray.push(this);
+    reveal.call(this);
+
+    /*
+    if ( clickedArray[0].id === clickedArray[1].id ) {
+      console.log("You cannot press the same box twice");
+      clickedArray.pop();
+    }
+    */
 
     if (clickedArray.length === 2) {
-      if (clickedArray[0].value === clickedArray[1].value) {
-        matched(clickedArray[0]);
-        matched(clickedArray[1]);
+      console.log("nice");
+      if (clickedArray[0].value === clickedArray[1].value && clickedArray[0].id !== clickedArray[1].id) {
+
+        matched.call(clickedArray[0]);
+        matched.call(clickedArray[1]);
 
         clickedArray = [];
 
@@ -114,8 +125,8 @@ let Cell = function(cell, i) {
         clickedArray[1].style.border = "5px solid red";
 
         setTimeout(() => {
-          hide(clickedArray[0]);
-          hide(clickedArray[1]);
+          hide.call(clickedArray[0]);
+          hide.call(clickedArray[1]);
 
           clickedArray[0].style.border = "1px solid purple";
           clickedArray[1].style.border = "1px solid purple";
@@ -128,32 +139,15 @@ let Cell = function(cell, i) {
   });
 };
 
-// The "mouseenter"event handler will cause the cells to turn change opacity when hovered over.
-//defineCell.prototype.
-
-
-// The "mouseleave" event handler will allow the cells to return to the opacity 1 when they are not being hovered over.
-//defineCell.prototype.
-
-
-
-
-
-
 // The setUp() is used to set up the cells to have event handlers and attributes
 let setUp = function() {
   let grid = document.getElementsByClassName("box");
-  cardValues = randomCards();
-  let newCell;
+  console.log(grid);
 
   for (let i = 0; i < grid.length; i++) {
-    newCell = Cell(grid[i], i);
-    console.log(typeof grid);
-    console.log(newCell);
-    cells.push = newCell;
 
+    cells.push( Cell.call(grid[i], i) );
   }
-  console.log(cells.length);
 };
 
 
