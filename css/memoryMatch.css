@@ -19,7 +19,7 @@ table {
   font-weight: bold;
 }
 
-.restartButton {
+#restartButton {
   text-align: center;
   font-weight: bold;
   border: 1px solid purple;

@@ -150,6 +150,10 @@ let setUp = function() {
   }
 };
 
+//  When the restart button is clicked, the event handler triggers a reload of the page.
+document.getElementById("restartButton").addEventListener("click", function(){
+    location.reload();
+});
 
 /* execute functions go here: */
 
